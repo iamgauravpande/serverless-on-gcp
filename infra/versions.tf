@@ -7,7 +7,7 @@ terraform {
     }
   }
   backend "gcs" {
-    bucket  = "serverless-on-gcp"
-    prefix  = "tfstate"
+    bucket = "serverless-on-gcp"
+    prefix = "tfstate"
   }
 }
