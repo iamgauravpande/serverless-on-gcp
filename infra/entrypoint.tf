@@ -1,5 +1,5 @@
 ## PubSUb Module:
 module "pubsub" {
-    source = "./infra/modules/pubsub"
+    source = "./modules/pubsub"
     pubsub = var.pubsub
 }
