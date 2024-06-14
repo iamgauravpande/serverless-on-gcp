@@ -1,0 +1,156 @@
+name: Serverless Infra
+
+on:
+  push:
+    branches:
+      - dev
+  
+  workflow_dispatch:
+
+jobs:
+  serverless_infra:
+    name: 'Serverless Infra'
+    runs-on: ubuntu-latest
+    defaults:
+      run: ./infra
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: 'actions/checkout@v3'
+      
+    - id: "auth" 
+      name: "Authenticate to Google Cloud"
+      uses: 'google-github-actions/auth@v2'
+      with:
+        # token_format: 'access_token'
+        workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER_NAME }}
+        service_account: ${{ secrets.GCP_WORKLOAD_IDENTITY_SA_EMAIL }}
+    
+    # Install gcloud, `setup-gcloud` automatically picks up authentication from `auth`.
+    - name: "Set up Cloud SDK"
+      uses: 'google-github-actions/setup-gcloud@v2'
+      with:
+        version: '>= 363.0.0'
+    
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: "Setup Terraform"
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.1.7"
+    
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: "Terraform Format"
+      id: fmt
+      run: terraform fmt
+      continue-on-error: false
+    
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: "Terraform Init"
+      id: init
+      run: |
+        rm -rf .terraform
+        rm -rf .terraform.lock.hcl
+        terraform init -backend-config ./infra/backend.tf -input=false
+
+    # Generates an execution plan for Terraform
+    - name: "Terraform Plan"
+      id: plan
+      run: terraform plan -var-file ./terraform.tfvars -input=false -lock=false -refresh=true -no-color
+
+  #   - name: Update Pull Request
+  #     id: comment
+  #     uses: actions/github-script@v6
+  #     if: github.event_name == 'pull_request'
+  #     env:
+  #       PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+  #     with:
+  #       github-token: ${{ secrets.GH_TOKEN }}
+  #       script: |
+  #         const output = `#### Terraform Format and Style 🤖🖌\`${{ steps.fmt.outcome }}\`
+  #         #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+  #         #### Terraform Validation 👨‍💻\`${{ steps.validate.outcome }}\`
+
+  #         <details><summary>Validation Output</summary>
+
+  #         \`\`\`\n
+  #         ${{ steps.validate.outputs.stdout }}
+  #         \`\`\`
+
+  #         </details>
+
+  #         #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
+  #         <details><summary>Show Plan</summary>
+
+  #         \`\`\`\n
+  #         ${process.env.PLAN}
+  #         \`\`\`
+
+  #         </details>
+
+  #         *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+  #         github.rest.issues.createComment({
+  #           issue_number: context.issue.number,
+  #           owner: context.repo.owner,
+  #           repo: context.repo.repo,
+  #           body: output
+  #         })
+
+  #   # Exit when plan failes
+  #   - name: "Terraform Plan Status 📄"
+  #     if: steps.plan.outcome == 'failure'
+  #     run: exit 1
+
+  #   # On push to "main", build or change infrastructure according to Terraform configuration files
+  #   # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information:
+  #   # https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+  
+  #   - name: Terraform Apply 🚀
+  #     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #     run: terraform apply -var-file ../env/poc.tfvars -input=false -lock=false -refresh=true -auto-approve -no-color
+  #     # run: terraform apply -var-file ../gcp/backend-config/vars.tfvars -input=false -lock=false -refresh=true -no-color
+
+  # slack_notification:
+  #   name: 'Slack Notification'
+  #   runs-on: [self-hosted, Linux , X64]
+  #   needs: [terraform_workspace]
+  #   if: always()
+    
+  #   steps:
+  #   - uses: actions/checkout@v3
+    
+  #   - name: Notify Plan on Slack
+  #     uses: 8398a7/action-slack@v3
+  #     with:
+  #       status: ${{ job.status }}
+  #       fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest # selectable (default: repo,message)
+  #     if: github.ref != 'refs/heads/main' && github.event_name == 'pull_request' && always()
+  #     env:
+  #       SLACK_CHANNEL: captain-alert
+  #       SLACK_COLOR: ${{ needs.terraform_workspace.result }}
+  #       SLACK_TITLE: ${{ github.repository }}
+  #       SLACK_MESSAGE: ${{ github.event.head_commit.message }}
+  #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  #       SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+  #       SLACK_FOOTER: 'Terraform Github Actions Feature Branch Push Alert'
+    
+  #   - name: Notify Plan on Slack
+  #     uses: 8398a7/action-slack@v3
+  #     with:
+  #       status: ${{ job.status }}
+  #       fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest # selectable (default: repo,message)
+  #     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #     env:
+  #       SLACK_CHANNEL: captain-alert
+  #       SLACK_COLOR: ${{ needs.terraform_workspace.result }}
+  #       SLACK_TITLE: ${{ github.repository }}
+  #       SLACK_MESSAGE: ${{ github.event.head_commit.message }}
+  #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  #       SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+  #       SLACK_FOOTER: 'Terraform Github Actions Feature Branch Push Alert'
