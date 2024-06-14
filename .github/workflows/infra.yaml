@@ -54,7 +54,7 @@ jobs:
     - name: "Terraform Init"
       id: init
       run: |
-        terraform init -backend-config backend.tf -input=false
+        terraform init -backend-config ../backend.tf -input=false
 
     # Generates an execution plan for Terraform
     - name: "Terraform Plan"
