@@ -54,8 +54,6 @@ jobs:
     - name: "Terraform Init"
       id: init
       run: |
-        rm -rf .terraform
-        rm -rf .terraform.lock.hcl
         terraform init -backend-config infra/backend.tf -input=false
 
     # Generates an execution plan for Terraform
