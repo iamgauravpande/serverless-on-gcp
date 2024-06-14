@@ -54,12 +54,12 @@ jobs:
     - name: "Terraform Init"
       id: init
       run: |
-        terraform init -backend-config infra/backend.tf -input=false
+        terraform init -backend-config backend.tf -input=false
 
     # Generates an execution plan for Terraform
     - name: "Terraform Plan"
       id: plan
-      run: terraform plan -var-file ./terraform.tfvars -input=false -lock=false -refresh=true -no-color
+      run: terraform plan -var-file terraform.tfvars -input=false -lock=false -refresh=true -no-color
 
   #   - name: Update Pull Request
   #     id: comment
