@@ -12,7 +12,8 @@ jobs:
     name: 'Serverless Infra'
     runs-on: ubuntu-latest
     defaults:
-      run: ./infra
+      run:
+        working-directory: ./infra
 
     permissions:
       contents: 'read'
