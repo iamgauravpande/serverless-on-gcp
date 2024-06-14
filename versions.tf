@@ -6,4 +6,9 @@ terraform {
       version = ">=5.10.0"
     }
   }
+  backend "gcs" {
+    bucket  = "serverless-on-gcp"
+    prefix  = "tfstate"
+    project = "bitlost"
+  }
 }
