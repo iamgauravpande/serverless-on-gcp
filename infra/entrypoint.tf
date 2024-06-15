@@ -1,4 +1,3 @@
-# PubSUb Module:
 module "pubsub" {
   source = "./modules/pubsub"
   pubsub = var.pubsub
@@ -23,4 +22,13 @@ module "subnets" {
   depends_on = [ 
     module.vpc 
   ]
+}
+
+module "connector" {
+  source = "./modules/vpcserverlessconnector"
+  connector = var.connector
+  depends_on = [ 
+    module.vpc,
+    module.subnets
+   ]
 }
