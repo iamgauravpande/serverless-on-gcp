@@ -16,3 +16,11 @@ module "vpc" {
   source = "./modules/vpc"
   vpc = var.vpc
 }
+
+module "subnets" {
+  source = "./modules/subnets"
+  subnets = var.subnets
+  depends_on = [ 
+    module.vpc 
+  ]
+}
