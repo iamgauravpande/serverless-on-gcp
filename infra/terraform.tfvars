@@ -10,6 +10,7 @@ job = {
     name                     = "job1"
     description              = "First Job"
     schedule                 = "0 0 * * *"
+    region                   = "asia-south1"
     time_zone                = "UTC"
     paused                   = true
     pubsub_target_topic_name = "projects/bitlost/topics/topic1"

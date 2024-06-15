@@ -4,6 +4,7 @@ resource "google_cloud_scheduler_job" "schedulerjob" {
     name = each.value["name"]
     description = each.value["description"]
     schedule = each.value["schedule"]
+    region = each.value["region"]
     time_zone = each.value["time_zone"]
     paused = each.value["paused"]
     
