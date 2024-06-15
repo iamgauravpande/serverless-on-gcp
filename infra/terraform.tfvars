@@ -36,3 +36,14 @@ subnets = {
       private_ip_google_access = true
   }
 }
+
+connector = {
+  "connector01" = {
+    name = "connector01"
+    machine_type = "e2-micro"
+    region = "asia-south1"
+    min_instances = "2"
+    max_instances = "3"
+    subnet_name = "vpc01"
+  }
+}
