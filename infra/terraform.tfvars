@@ -18,3 +18,10 @@ job = {
 
   }
 }
+
+vpc = {
+  "vpc01" = {
+    name = "vpc01"
+    auto_create_subnetworks = false
+  }
+}
