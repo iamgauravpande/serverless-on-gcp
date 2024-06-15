@@ -4,7 +4,7 @@ resource "google_cloud_scheduler_job" "schedulerjob" {
     name = each.value["name"]
     description = each.value["description"]
     schedule = each.value["schedule"]
-    time_zone = each.value[time_zone]
+    time_zone = each.value["time_zone"]
     paused = each.value["paused"]
     
     pubsub_target {
