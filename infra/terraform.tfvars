@@ -44,6 +44,6 @@ connector = {
     region = "asia-south1"
     min_instances = "2"
     max_instances = "3"
-    subnet_name = "vpc01"
+    subnet_name = "serverless-subnet01"
   }
 }
