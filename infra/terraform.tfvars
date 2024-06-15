@@ -25,3 +25,14 @@ vpc = {
     auto_create_subnetworks = false
   }
 }
+
+subnets = {
+  "serverless-subnet01" = {
+      name = "serverless-subnet01"
+      ip_cidr_range = "192.168.30.0/28"
+      region = "asia-south1"
+      network = "vpc01"
+      stack_type = "IPV4_ONLY"
+      private_ip_google_access = true
+  }
+}
