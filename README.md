@@ -39,7 +39,7 @@ Reference [GCP WIF](https://dev.to/iamgauravpande/enabling-workload-identity-fed
 ![GCP Serverless](./img/GCP_CloudFunction_1stGen.JPG)
 
 
-### SERVERLESS FLOW VALIDATION:
+### Serverless Flow Validation:
 
 - Cloud Scheduler Job Run:
 
