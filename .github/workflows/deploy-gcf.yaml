@@ -9,7 +9,7 @@ on:
     paths:
       - src/**
       - .github/workflows/deploy-gcf.yaml
-      
+jobs:      
   deploy-cloud-function:
     runs-on: 'ubuntu-latest'
     permissions:
