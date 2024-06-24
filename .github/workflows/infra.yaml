@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - dev
+    paths:
+      - infra/**
   
   workflow_dispatch:
 
