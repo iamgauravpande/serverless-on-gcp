@@ -10,7 +10,7 @@ on:
       - src/**
       - .github/workflows/deploy-gcf.yaml
       
-  Deploy-Cloud-Function:
+  deploy-cloud-function:
     runs-on: 'ubuntu-latest'
     permissions:
       contents: 'read'
